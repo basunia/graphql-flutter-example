@@ -14,11 +14,18 @@ class CountQuery {
         emoji
         name
         phone
+        continent {
+            code
+            name
+        }
+        states {
+            name
+        }
     }
   }
   ''';
 
   // final readCountry = parseString(readCountry);
 
-  static const String defaultCountryCode = "BD";
+  static const String defaultCountryCode = "IN";
 }
