@@ -1,41 +1,24 @@
 import 'package:graph_ql_api/data/country.dart';
+import 'package:graph_ql_api/data/country_query.dart';
+import 'package:graph_ql_api/data/graphql_client.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:gql/language.dart';
 
 class ApiRequest {
   static const apiEndPoint = "https://countries.trevorblades.com";
 
-  HttpLink get _httpLink => HttpLink(apiEndPoint);
-
-  GraphQLClient get _graphQLClient =>
-      GraphQLClient(link: _httpLink, cache: GraphQLCache());
-
-  static const String readCountry = r'''
-  query CountryName($country: ID!) {
-    country(code: $country) {
-        capital
-        code
-        currency
-        emoji
-        name
-        phone
-    }
+  QueryOptions get getOptions {
+    const countryQuery = CountQuery();
+    return QueryOptions(
+      document: parseString(countryQuery.readCountry),
+      variables: <String, dynamic>{
+        'country': countryQuery.countryCode,
+      },
+    );
   }
-  ''';
-
-  // final readCountry = parseString(readCountry);
-
-  static const String countryCode = "IN";
-
-  final QueryOptions options = QueryOptions(
-    document: parseString(readCountry),
-    variables: const <String, dynamic>{
-      'country': countryCode,
-    },
-  );
 
   Future<void> fetchCountry() async {
-    QueryResult result = await _graphQLClient.query(options);
+    QueryResult result = await GqlClient().getClient.query(getOptions);
     if (result.hasException) {
       print(result.exception.toString());
     }
